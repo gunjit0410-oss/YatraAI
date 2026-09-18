@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}User Login | YatraAI{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white">
+                <div class="text-center mb-4">
+                    <span class="bg-warning text-dark px-3 py-1 rounded-3 fw-bold fs-5 d-inline-block mb-2">
+                        <i class="fas fa-compass text-danger me-1"></i>YatraAI
+                    </span>
+                    <h3 class="fw-bold text-dark">Welcome Back</h3>
+                    <p class="text-muted small">Login to save your personalized itineraries and favourites.</p>
+                </div>
+
+                <form method="POST" action="">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Username</label>
+                        <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Password</label>
+                        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-3 rounded-3 fw-bold text-dark mb-3">
+                        <i class="fas fa-right-to-bracket me-2"></i> Log In
+                    </button>
+
+                    <p class="text-center text-muted small mb-0">
+                        Don't have an account? <a href="{% url 'register' %}" class="text-warning fw-bold text-decoration-none">Register here</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

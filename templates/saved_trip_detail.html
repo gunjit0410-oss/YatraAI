@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ trip.trip_name }} - Saved Trip Details | YatraAI{% endblock %}
+
+{% block content %}
+<div class="bg-dark text-white py-4 mb-4">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div>
+            <span class="badge bg-warning text-dark fw-bold mb-2">Saved Itinerary</span>
+            <h2 class="fw-bold mb-1">{{ trip.trip_name }}</h2>
+            <p class="text-secondary small mb-0">Starting: {{ trip.starting_location }} | Budget: ₹{{ trip.budget|floatformat:0 }} | Est. Cost: ₹{{ trip.total_estimated_cost|floatformat:0 }}</p>
+        </div>
+        <a href="{% url 'my_trips' %}" class="btn btn-outline-light rounded-pill btn-sm mt-3 mt-md-0">
+            <i class="fas fa-arrow-left me-1"></i> Back to My Trips
+        </a>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Day-wise Timeline -->
+        <div class="col-lg-7">
+            <h4 class="fw-bold text-dark mb-3"><i class="fas fa-calendar-days text-warning me-2"></i> Itinerary Schedule</h4>
+            
+            {% for day in itinerary.days %}
+            <div class="card border-0 rounded-4 shadow-sm mb-4 bg-white overflow-hidden">
+                <div class="bg-dark text-white p-3 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-warning">{{ day.title }}</h6>
+                    <span class="badge bg-secondary">Day {{ day.day_number }}</span>
+                </div>
+                <div class="card-body p-4">
+                    {% if day.morning %}
+                    <div class="timeline-card mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="timeline-time-badge"><i class="fas fa-sun text-warning me-1"></i> Morning</span>
+                            <span class="small text-muted fw-semibold">{{ day.morning.duration }}</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ day.morning.place_name }}</h5>
+                        <p class="text-secondary small mb-2">{{ day.morning.activity }}</p>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <small class="text-muted"><i class="fas fa-lightbulb text-warning me-1"></i> {{ day.morning.tip }}</small>
+                            {% if day.morning.place_id %}
+                            <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3" onclick="if(window.focusPlaceMarker) window.focusPlaceMarker({{ day.morning.place_id }});">
+                                <i class="fas fa-location-dot me-1"></i> View Journey on Map
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if day.afternoon %}
+                    <div class="timeline-card mb-3" style="border-left-color: #00695c;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="timeline-time-badge" style="background:#e0f2f1; color:#004d40;"><i class="fas fa-cloud-sun text-teal me-1"></i> Afternoon</span>
+                            <span class="small text-muted fw-semibold">{{ day.afternoon.duration }}</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ day.afternoon.place_name }}</h5>
+                        <p class="text-secondary small mb-2">{{ day.afternoon.activity }}</p>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <small class="text-muted"><i class="fas fa-utensils me-1"></i> {{ day.afternoon.tip }}</small>
+                            {% if day.afternoon.place_id %}
+                            <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3" onclick="if(window.focusPlaceMarker) window.focusPlaceMarker({{ day.afternoon.place_id }});">
+                                <i class="fas fa-location-dot me-1"></i> View Journey on Map
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if day.evening %}
+                    <div class="timeline-card" style="border-left-color: #6366f1;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="timeline-time-badge" style="background:#e0e7ff; color:#3730a3;"><i class="fas fa-moon me-1"></i> Evening</span>
+                            <span class="small text-muted fw-semibold">{{ day.evening.duration }}</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ day.evening.place_name }}</h5>
+                        <p class="text-secondary small mb-2">{{ day.evening.activity }}</p>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                            <small class="text-muted"><i class="fas fa-camera me-1"></i> {{ day.evening.tip }}</small>
+                            {% if day.evening.place_id %}
+                            <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-bold rounded-pill px-3" onclick="if(window.focusPlaceMarker) window.focusPlaceMarker({{ day.evening.place_id }});">
+                                <i class="fas fa-location-dot me-1"></i> View Journey on Map
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Map View -->
+        <div class="col-lg-5">
+            <div class="sticky-lg-top" style="top: 100px;">
+                <h4 class="fw-bold text-dark mb-3"><i class="fas fa-map-marked-alt text-warning me-2"></i> Route Map</h4>
+                <div id="map" class="mb-3"></div>
+                <div class="card border-0 rounded-4 shadow-sm p-3 bg-white">
+                    <small class="text-muted d-block mb-1"><i class="fas fa-info-circle text-info me-1"></i> Interactive Map Route</small>
+                    <p class="small text-secondary mb-0">Click markers or click <strong>'View Journey on Map'</strong> on timeline items to pan directly to that spot.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const placesData = {{ map_places_json|default:'[]'|safe }};
+        if (placesData && placesData.length > 0) {
+            initYatraMap('map', placesData);
+        }
+    });
+</script>
+{% endblock %}

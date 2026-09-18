@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Explore India. Your Way | YatraAI Incredible India Travel Planner{% endblock %}
+
+{% block content %}
+<!-- Incredible India Full Bleed Hero Section with Interactive Background Carousel -->
+<section class="hero-section text-center position-relative">
+    <!-- Background Carousel Slides -->
+    <div class="hero-bg-carousel">
+        <div class="hero-bg-slide active" data-category="Heritage" style="background-image: url('{% static 'images/places/kumbhalgarh.jpg' %}');"></div>
+        <div class="hero-bg-slide" data-category="Nature" style="background-image: url('{% static 'images/places/cherrapunji.jpg' %}');"></div>
+        <div class="hero-bg-slide" data-category="Wildlife" style="background-image: url('{% static 'images/places/kanha.jpg' %}');"></div>
+        <div class="hero-bg-slide" data-category="Spiritual" style="background-image: url('{% static 'images/places/kashi.jpg' %}');"></div>
+        <div class="hero-bg-slide" data-category="Adventure" style="background-image: url('{% static 'images/places/gandikota.jpg' %}');"></div>
+        <div class="hero-bg-slide" data-category="Hill Station" style="background-image: url('{% static 'images/places/dallake.jpg' %}');"></div>
+    </div>
+    <div class="hero-bg-overlay"></div>
+
+    <div class="container py-5 hero-content-relative">
+        <div class="max-w-800 mx-auto">
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 rounded-pill mb-3">
+                <i class="fas fa-sparkles me-1"></i> AI Travel Companion
+            </span>
+            <h1 class="hero-title mb-4">Explore India. Your Way.</h1>
+            <p class="hero-subtitle mb-5 mx-auto">
+                Tell us where you want to go, your budget and what you love. We'll help you create a personalized journey.
+            </p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{% url 'plan_trip' %}" class="btn btn-yatra btn-lg px-5 py-3 shadow-lg fs-5">
+                    <i class="fas fa-magic me-2"></i> Plan My Trip
+                </a>
+                <a href="{% url 'explore' %}" id="hero-explore-btn" class="btn btn-yatra-secondary btn-lg px-4 py-3 fs-5">
+                    Explore India <i class="fas fa-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Ticker Bar with Highlighted Visual Indicator Pills -->
+    <div class="hero-category-ticker">
+        <div class="container d-flex justify-content-center flex-wrap gap-2 gap-md-3">
+            <a href="{% url 'category_detail' category_slug='heritage' %}" class="hero-category-item active text-decoration-none" data-category="Heritage">
+                <i class="fas fa-landmark me-1"></i> Heritage
+            </a>
+            <a href="{% url 'category_detail' category_slug='nature' %}" class="hero-category-item text-decoration-none" data-category="Nature">
+                <i class="fas fa-tree me-1"></i> Nature
+            </a>
+            <a href="{% url 'category_detail' category_slug='wildlife' %}" class="hero-category-item text-decoration-none" data-category="Wildlife">
+                <i class="fas fa-paw me-1"></i> Wildlife
+            </a>
+            <a href="{% url 'category_detail' category_slug='spiritual' %}" class="hero-category-item text-decoration-none" data-category="Spiritual">
+                <i class="fas fa-om me-1"></i> Spiritual
+            </a>
+            <a href="{% url 'category_detail' category_slug='adventure' %}" class="hero-category-item text-decoration-none" data-category="Adventure">
+                <i class="fas fa-mountain me-1"></i> Adventure
+            </a>
+            <a href="{% url 'category_detail' category_slug='hill-station' %}" class="hero-category-item text-decoration-none" data-category="Hill Station">
+                <i class="fas fa-cloud-sun me-1"></i> Hill Station
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="text-warning fw-bold text-uppercase tracking-wider">How It Works</span>
+            <h2 class="fw-bold text-dark display-6 mt-1">Plan Your Trip in 3 Simple Steps</h2>
+        </div>
+
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 border border-light">
+                    <div class="bg-warning text-dark rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; font-size: 1.5rem; font-weight: 800;">01</div>
+                    <h5 class="fw-bold mb-2">Tell us your preferences</h5>
+                    <p class="text-muted small mb-0">Choose your destination, budget, duration, companions, and interests.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 border border-light">
+                    <div class="bg-dark text-warning rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; font-size: 1.5rem; font-weight: 800;">02</div>
+                    <h5 class="fw-bold mb-2">Get personalized recommendations</h5>
+                    <p class="text-muted small mb-0">Our system finds places that match your requirements and interest score.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100 border border-light">
+                    <div class="bg-warning text-dark rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px; font-size: 1.5rem; font-weight: 800;">03</div>
+                    <h5 class="fw-bold mb-2">Get your travel plan</h5>
+                    <p class="text-muted small mb-0">AI creates a day-wise itinerary with estimated costs, interactive map, and budget breakdown.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Incredible India Style ATTRACTIONS Carousel Section -->
+<section class="section-watermark-wrapper" style="background-color: #f8fafc;">
+    <div class="section-watermark-title">ATTRACTIONS</div>
+    <div class="container section-content-relative">
+        <div class="text-center mb-5">
+            <h2 class="fw-extrabold display-5 text-dark mb-1">ATTRACTIONS</h2>
+            <p class="text-muted fs-5">— worth a thousand stories —</p>
+        </div>
+
+        <div class="swiper attractionsSwiper pb-5">
+            <div class="swiper-wrapper">
+                {% for place in featured_places %}
+                <div class="swiper-slide">
+                    <div class="card place-card">
+                        <div class="place-card-img-wrap">
+                            <img src="{{ place.image_url }}" class="place-card-img" alt="{{ place.name }}">
+                            <span class="badge-category">{{ place.category }}</span>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="fw-bold mb-0 text-dark">{{ place.name }}</h5>
+                                <span class="badge bg-warning text-dark fw-bold"><i class="fas fa-star me-1 text-danger"></i>{{ place.rating }}</span>
+                            </div>
+                            <p class="text-muted small mb-3"><i class="fas fa-location-dot text-danger me-1"></i> {{ place.city }}, {{ place.state }}</p>
+                            <p class="card-text text-secondary small flex-grow-1 mb-4">{{ place.short_description|truncatewords:12 }}</p>
+                            
+                            <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block">Est. Cost</small>
+                                    <span class="fw-bold text-dark">₹{{ place.estimated_cost|floatformat:0 }}</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <a href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-danger rounded-circle p-2" title="Open in Google Maps">
+                                        <i class="fas fa-map-marked-alt"></i>
+                                    </a>
+                                    <a href="{% url 'place_detail' place.pk %}" class="btn btn-sm btn-outline-warning text-dark fw-semibold rounded-pill px-3">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <!-- Swiper Navigation Arrows -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</section>
+
+<!-- LESSER KNOWN WONDERS (Hidden Gems Carousel Section) -->
+<section class="section-watermark-wrapper bg-white">
+    <div class="section-watermark-title" style="font-size: 5.5rem;">LESSER KNOWN WONDERS</div>
+    <div class="container section-content-relative">
+        <div class="text-center mb-5">
+            <h2 class="fw-extrabold display-5 text-dark mb-1">LESSER KNOWN WONDERS</h2>
+            <p class="text-muted fs-5">— uncover India's hidden treasures —</p>
+        </div>
+
+        <div class="swiper gemsSwiper pb-5">
+            <div class="swiper-wrapper">
+                {% for gem in hidden_gems %}
+                <div class="swiper-slide">
+                    <div class="card place-card border-0 shadow-sm">
+                        <div class="place-card-img-wrap">
+                            <img src="{{ gem.image_url }}" class="place-card-img" alt="{{ gem.name }}">
+                            <span class="badge-category" style="background:#059669; color:white;"><i class="fas fa-leaf me-1"></i> Eco-Score: {{ gem.sustainability_score }}/10</span>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="fw-bold text-dark mb-1">{{ gem.name }}</h5>
+                            <p class="text-muted small mb-3"><i class="fas fa-location-dot text-danger me-1"></i> {{ gem.city }}, {{ gem.state }}</p>
+                            <p class="card-text text-secondary small flex-grow-1 mb-3">{{ gem.short_description }}</p>
+                            <a href="{% url 'place_detail' gem.pk %}" class="btn btn-outline-success w-100 rounded-pill btn-sm fw-bold">
+                                Discover Gem <i class="fas fa-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 bg-warning text-dark text-center">
+    <div class="container py-3">
+        <h2 class="fw-extrabold display-6 mb-3">Ready to plan your personalized trip?</h2>
+        <p class="fs-5 mb-4 opacity-90 max-w-700 mx-auto">Create a customized, day-wise itinerary matching your exact budget and travel preferences in seconds.</p>
+        <a href="{% url 'plan_trip' %}" class="btn btn-dark btn-lg rounded-pill px-5 py-3 fw-bold shadow fs-5">
+            <i class="fas fa-magic me-2 text-warning"></i> Plan My Trip Now
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Initialize Swiper.js for Attractions
+        new Swiper('.attractionsSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            loop: true,
+            autoplay: {
+                delay: 3500,
+                disableOnInteraction: false,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 }
+            }
+        });
+
+        // Initialize Swiper.js for Hidden Gems
+        new Swiper('.gemsSwiper', {
+            slidesPerView: 1,
+            spaceBetween: 24,
+            loop: true,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            breakpoints: {
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 }
+            }
+        });
+
+        // Hero Background Carousel & Interactive Category Ticker
+        const heroSlides = document.querySelectorAll('.hero-bg-slide');
+        const heroCategoryBtns = document.querySelectorAll('.hero-category-item');
+        const heroExploreBtn = document.getElementById('hero-explore-btn');
+        let heroSlideIndex = 0;
+        let heroTimer = null;
+
+        function setHeroCategory(index) {
+            heroSlides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            heroCategoryBtns.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            heroSlideIndex = index;
+        }
+
+        function autoAdvanceHeroSlide() {
+            const nextIdx = (heroSlideIndex + 1) % heroSlides.length;
+            setHeroCategory(nextIdx);
+        }
+
+        function startHeroCarousel() {
+            stopHeroCarousel();
+            heroTimer = setInterval(autoAdvanceHeroSlide, 4500);
+        }
+
+        function stopHeroCarousel() {
+            if (heroTimer) {
+                clearInterval(heroTimer);
+                heroTimer = null;
+            }
+        }
+
+        heroCategoryBtns.forEach((btn, index) => {
+            btn.addEventListener('mouseenter', function() {
+                setHeroCategory(index);
+                stopHeroCarousel();
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                startHeroCarousel();
+            });
+        });
+
+        if (heroSlides.length > 0) {
+            setHeroCategory(0);
+            startHeroCarousel();
+        }
+    });
+</script>
+{% endblock %}

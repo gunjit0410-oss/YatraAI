@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Tourist Destinations in India | YatraAI{% endblock %}
+
+{% block content %}
+<div class="section-watermark-wrapper bg-dark text-white py-5 position-relative mb-4" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+    <div class="section-watermark-title" style="color: rgba(255, 255, 255, 0.05);">DESTINATIONS</div>
+    <div class="container text-center py-4 section-content-relative">
+        <h1 class="fw-extrabold display-5">DESTINATIONS</h1>
+        <p class="text-warning fs-5">— discover India's top attractions & hidden gems —</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <span class="text-muted fs-5 fw-semibold">Showing <strong>{{ places|length }}</strong> Incredible Destinations across India</span>
+        <a href="{% url 'plan_trip' %}" class="btn btn-warning rounded-pill px-4 fw-bold text-dark shadow-sm">
+            <i class="fas fa-magic me-2"></i> Plan Trip with These Places
+        </a>
+    </div>
+
+    {% if places %}
+    <div class="row g-4" id="explore-cards-container">
+        {% for place in places %}
+        <div class="col-sm-6 col-lg-4 col-xl-3 explore-place-card-item">
+            <div class="card place-card h-100">
+                <div class="place-card-img-wrap">
+                    <img src="{{ place.image_url }}" class="place-card-img" alt="{{ place.name }}">
+                    <span class="badge-category">{{ place.category }}</span>
+                    {% if place.is_hidden_gem %}
+                    <span class="badge-hidden-gem" style="position:absolute; top:1rem; right:1rem; background:#059669; color:white; font-size:0.75rem; padding:0.35rem 0.85rem; border-radius:50rem; font-weight:700;"><i class="fas fa-gem me-1"></i> Hidden Gem</span>
+                    {% endif %}
+                </div>
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold mb-0 text-dark fs-6">{{ place.name }}</h5>
+                        <span class="badge bg-warning text-dark fw-bold"><i class="fas fa-star me-1 text-danger"></i>{{ place.rating }}</span>
+                    </div>
+                    <p class="text-muted small mb-2"><i class="fas fa-location-dot text-danger me-1"></i> {{ place.city }}, {{ place.state }}</p>
+                    <p class="card-text text-secondary small flex-grow-1 mb-3">{{ place.short_description|truncatewords:12 }}</p>
+                    
+                    <div class="row text-center bg-light rounded-3 p-2 mb-3 g-0">
+                        <div class="col-6 border-end">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Est. Cost</small>
+                            <strong class="text-dark small">₹{{ place.estimated_cost|floatformat:0 }}</strong>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block" style="font-size: 0.75rem;">Duration</small>
+                            <strong class="text-dark small">{{ place.recommended_duration }} hrs</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-auto">
+                        <a href="{% url 'place_detail' place.pk %}" class="btn btn-outline-dark w-100 rounded-3 fw-semibold py-2 btn-sm">
+                            View Details <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger rounded-3 py-2 btn-sm px-3" title="Open in Google Maps">
+                            <i class="fas fa-directions"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="card border-0 rounded-4 shadow-sm p-5 text-center bg-white max-w-700 mx-auto">
+        <i class="fas fa-compass-slash fa-3x text-muted mb-3"></i>
+        <h4 class="fw-bold text-dark">No Tourist Places Found</h4>
+        <p class="text-muted mb-4">No destinations available at the moment.</p>
+        <a href="{% url 'explore' %}" class="btn btn-warning rounded-pill px-4 fw-bold mx-auto">Reset Explore Page</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

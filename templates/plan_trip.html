@@ -1,0 +1,263 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Plan Your Trip | YatraAI{% endblock %}
+
+{% block content %}
+<div class="bg-dark text-white py-4 mb-4 position-relative" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+    <div class="container text-center py-2">
+        <h1 class="fw-bold display-6 mb-1">Plan Your Trip</h1>
+        <p class="text-secondary small max-w-700 mx-auto mb-0">Tell us a little about your trip and we'll create a personalized journey.</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+
+            <!-- STEP 1 OF 5 Progress Indicator -->
+            <div class="text-center mb-4">
+                <span id="step-counter-text" class="badge bg-warning text-dark fw-bold px-4 py-2 rounded-pill fs-6">
+                    STEP 1 OF 5
+                </span>
+                <div class="progress mt-3 max-w-500 mx-auto" style="height: 8px;">
+                    <div id="step-progress-fill" class="progress-bar bg-warning" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+
+            <!-- Planner Card Container -->
+            <div class="planner-card shadow-lg border-0 mt-3">
+                <form id="yatra-planner-form" method="POST" action="{% url 'plan_trip' %}">
+                    {% csrf_token %}
+
+                    <!-- STEP 1: Destination -->
+                    <div class="wizard-step-content active" id="wizard-step-1">
+                        <div class="text-center mb-4">
+                            <span class="bg-warning-subtle text-warning p-3 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-map-location-dot fs-2"></i>
+                            </span>
+                            <h3 class="fw-bold text-dark mb-1">Where do you want to go?</h3>
+                            <p class="text-muted small">Select any destination state or city from our database.</p>
+                        </div>
+
+                        <div class="mb-4 position-relative max-w-600 mx-auto">
+                            <label class="form-label fw-bold">Destination State or City</label>
+                            <input type="text" id="dest-input" name="destination" class="form-control form-control-lg" placeholder="Type a state or city (e.g. Madhya Pradesh, Goa, Kerala)..." value="Madhya Pradesh" autocomplete="off" required>
+                            <div id="dest-suggestions" class="autocomplete-suggestions"></div>
+                        </div>
+
+                        <div class="text-center mb-2">
+                            <small class="text-muted d-block mb-2 fw-semibold">Popular Destinations in Database:</small>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill active bg-warning text-dark" data-dest="Madhya Pradesh"><i class="fas fa-mountain me-1"></i> Madhya Pradesh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Goa"><i class="fas fa-umbrella-beach me-1"></i> Goa</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Kerala"><i class="fas fa-water me-1"></i> Kerala</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Maharashtra"><i class="fas fa-landmark me-1"></i> Maharashtra</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Rajasthan"><i class="fas fa-chess-knight me-1"></i> Rajasthan</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Himachal Pradesh"><i class="fas fa-snowflake me-1"></i> Himachal Pradesh</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill quick-dest-pill" data-dest="Gujarat"><i class="fas fa-sun me-1"></i> Gujarat</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Duration -->
+                    <div class="wizard-step-content" id="wizard-step-2">
+                        <div class="text-center mb-4">
+                            <span class="bg-warning-subtle text-warning p-3 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-calendar-days fs-2"></i>
+                            </span>
+                            <h3 class="fw-bold text-dark mb-1">How many days?</h3>
+                            <p class="text-muted small">Choose the total duration for your trip.</p>
+                        </div>
+
+                        <div class="max-w-500 mx-auto text-center py-3">
+                            <div class="display-3 fw-extrabold text-warning mb-3">
+                                <span id="days-count-val">4</span> <span class="fs-4 text-dark font-normal">Days</span>
+                            </div>
+                            <input type="range" class="form-range" name="num_days" min="1" max="15" value="4" id="daysRange" oninput="document.getElementById('days-count-val').textContent = this.value;">
+                            <div class="d-flex justify-content-between text-muted small mt-2">
+                                <span>1 Day</span>
+                                <span>7 Days</span>
+                                <span>15 Days</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: Budget -->
+                    <div class="wizard-step-content" id="wizard-step-3">
+                        <div class="text-center mb-4">
+                            <span class="bg-warning-subtle text-warning p-3 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-indian-rupee-sign fs-2"></i>
+                            </span>
+                            <h3 class="fw-bold text-dark mb-1">What's your budget?</h3>
+                            <p class="text-muted small">Enter your total target budget in ₹ INR.</p>
+                        </div>
+
+                        <div class="max-w-500 mx-auto mb-4">
+                            <label class="form-label fw-bold">Budget in ₹</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bg-warning text-dark fw-bold">₹</span>
+                                <input type="number" id="budget-input" name="budget" class="form-control" value="15000" min="1000" step="500" required>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <small class="text-muted d-block mb-2 fw-semibold">Quick Presets:</small>
+                            <div class="d-flex gap-2 justify-content-center">
+                                <button type="button" class="btn btn-outline-secondary rounded-pill budget-preset-pill" data-value="10000">₹10,000</button>
+                                <button type="button" class="btn btn-outline-secondary rounded-pill budget-preset-pill" data-value="15000">₹15,000</button>
+                                <button type="button" class="btn btn-outline-secondary rounded-pill budget-preset-pill" data-value="25000">₹25,000</button>
+                                <button type="button" class="btn btn-outline-secondary rounded-pill budget-preset-pill" data-value="50000">₹50,000</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Companions -->
+                    <div class="wizard-step-content" id="wizard-step-4">
+                        <div class="text-center mb-4">
+                            <span class="bg-warning-subtle text-warning p-3 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-users fs-2"></i>
+                            </span>
+                            <h3 class="fw-bold text-dark mb-1">Who are you travelling with?</h3>
+                            <p class="text-muted small">Select your travel companion style.</p>
+                        </div>
+
+                        <div class="single-select-group">
+                            <input type="hidden" name="travel_type" value="Friends">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-3">
+                                    <div class="option-card-selectable" data-value="Solo">
+                                        <i class="fas fa-user-ninja option-card-icon"></i>
+                                        <h6 class="fw-bold mb-1">Solo</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="option-card-selectable" data-value="Couple">
+                                        <i class="fas fa-heart option-card-icon text-danger"></i>
+                                        <h6 class="fw-bold mb-1">Couple</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="option-card-selectable" data-value="Family">
+                                        <i class="fas fa-people-roof option-card-icon text-info"></i>
+                                        <h6 class="fw-bold mb-1">Family</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="option-card-selectable selected" data-value="Friends">
+                                        <i class="fas fa-user-group option-card-icon text-warning"></i>
+                                        <h6 class="fw-bold mb-1">Friends</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: Interests -->
+                    <div class="wizard-step-content" id="wizard-step-5">
+                        <div class="text-center mb-4">
+                            <span class="bg-warning-subtle text-warning p-3 rounded-circle d-inline-block mb-3">
+                                <i class="fas fa-heart fs-2"></i>
+                            </span>
+                            <h3 class="fw-bold text-dark mb-1">What do you enjoy?</h3>
+                            <p class="text-muted small">Select your interests to customize matching recommendations.</p>
+                        </div>
+
+                        <div class="multi-select-group">
+                            <div class="row g-3">
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable selected">
+                                        <input type="checkbox" name="interests" value="History" checked hidden>
+                                        <i class="fas fa-landmark option-card-icon"></i>
+                                        <h6 class="fw-bold mb-0">History</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable selected">
+                                        <input type="checkbox" name="interests" value="Culture" checked hidden>
+                                        <i class="fas fa-masks-theater option-card-icon text-teal"></i>
+                                        <h6 class="fw-bold mb-0">Culture</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable selected">
+                                        <input type="checkbox" name="interests" value="Food" checked hidden>
+                                        <i class="fas fa-utensils option-card-icon text-danger"></i>
+                                        <h6 class="fw-bold mb-0">Food</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Nature" hidden>
+                                        <i class="fas fa-tree option-card-icon text-success"></i>
+                                        <h6 class="fw-bold mb-0">Nature</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Adventure" hidden>
+                                        <i class="fas fa-person-hiking option-card-icon text-warning"></i>
+                                        <h6 class="fw-bold mb-0">Adventure</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Spirituality" hidden>
+                                        <i class="fas fa-om option-card-icon text-purple"></i>
+                                        <h6 class="fw-bold mb-0">Spirituality</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Wildlife" hidden>
+                                        <i class="fas fa-paw option-card-icon text-success"></i>
+                                        <h6 class="fw-bold mb-0">Wildlife</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Photography" hidden>
+                                        <i class="fas fa-camera option-card-icon text-primary"></i>
+                                        <h6 class="fw-bold mb-0">Photography</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-4">
+                                    <div class="option-card-selectable">
+                                        <input type="checkbox" name="interests" value="Relaxation" hidden>
+                                        <i class="fas fa-spa option-card-icon text-info"></i>
+                                        <h6 class="fw-bold mb-0">Relaxation</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Form Defaults -->
+                    <input type="hidden" name="starting_location" value="New Delhi">
+                    <input type="hidden" name="travel_pace" value="Balanced">
+                    <input type="checkbox" name="prefer_hidden_gems" value="on" checked hidden>
+
+                    <!-- Wizard Buttons Bar -->
+                    <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold" id="btn-prev-step" style="display: none;">
+                            <i class="fas fa-arrow-left me-2"></i> Back
+                        </button>
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-yatra btn-lg shadow-sm" id="btn-next-step">
+                                Next Step <i class="fas fa-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="ai-loading-overlay" class="ai-loading-overlay">
+    <div class="travel-loader-spinner"></div>
+    <h3 class="fw-bold mb-2"><i class="fas fa-compass text-warning me-2"></i> Finding places that match your journey...</h3>
+    <p class="text-secondary fs-5 mb-0">Searching database places and calculating recommendation scores.</p>
+</div>
+{% endblock %}

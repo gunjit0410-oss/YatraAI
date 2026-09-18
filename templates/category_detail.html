@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ theme.name }} Destinations | YatraAI Incredible India{% endblock %}
+
+{% block content %}
+<!-- Custom Category Hero Banner -->
+<div class="category-hero position-relative py-5 text-white" style="background: {{ theme.gradient }}; min-height: 380px; display: flex; align-items: center; background-size: cover; background-position: center;">
+    <div class="hero-bg-overlay" style="background: rgba(0, 0, 0, 0.45);"></div>
+    <div class="container position-relative py-4" style="z-index: 2;">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge px-3 py-2 rounded-pill fw-bold mb-3 d-inline-flex align-items-center gap-2" style="background: {{ theme.text_badge_bg }}; color: {{ theme.accent_color }}; border: 1px solid {{ theme.accent_color }}; font-size: 0.95rem;">
+                    <i class="fas {{ theme.icon }}"></i> {{ theme.badge }}
+                </span>
+                <h1 class="display-4 fw-extrabold mb-3 text-white">
+                    Explore <span style="color: {{ theme.accent_color }};">{{ theme.name }}</span> of India
+                </h1>
+                <p class="lead text-white-50 mb-4 max-w-700">
+                    {{ theme.subtitle }}
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="{% url 'plan_trip' %}?category={{ theme.name }}" class="btn btn-warning rounded-pill fw-bold px-4 py-2.5 shadow">
+                        <i class="fas fa-compass me-2"></i> Plan {{ theme.name }} Trip
+                    </a>
+                    <a href="{% url 'explore' %}?category={{ theme.name }}" class="btn btn-outline-light rounded-pill px-4 py-2.5">
+                        <i class="fas fa-search me-2"></i> Browse All ({{ total_count }})
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 d-none d-lg-block text-center">
+                <div class="category-hero-card p-3 rounded-4 shadow-lg bg-dark bg-opacity-50 backdrop-blur border border-white-20">
+                    <img src="{{ theme.hero_img }}" alt="{{ theme.name }}" class="img-fluid rounded-3 mb-3 shadow" style="height: 220px; width: 100%; object-fit: cover;">
+                    <h5 class="text-white fw-bold mb-1">{{ total_count }} Curated Destinations</h5>
+                    <p class="text-white-50 small mb-0">Handpicked for authentic Incredible India experiences</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Places List Section -->
+<section class="py-5 bg-light">
+    <div class="container py-3">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div>
+                <h3 class="fw-bold text-dark mb-1">Top Rated {{ theme.name }} Places</h3>
+                <p class="text-muted mb-0">Showing {{ total_count }} handpicked locations across India</p>
+            </div>
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary rounded-pill btn-sm px-3">
+                <i class="fas fa-arrow-left me-1"></i> Back to Home
+            </a>
+        </div>
+
+        {% if places %}
+        <div class="row g-4">
+            {% for place in places %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card place-card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative hover-lift">
+                    <div class="place-card-img-wrap position-relative">
+                        <img src="{{ place.image_url }}" class="place-card-img w-100" alt="{{ place.name }}" style="height: 220px; object-fit: cover;">
+                        <span class="badge position-absolute top-0 start-0 m-3 px-3 py-1 rounded-pill fw-bold text-dark bg-warning">
+                            {{ place.category }}
+                        </span>
+                        {% if place.is_hidden_gem %}
+                        <span class="badge position-absolute top-0 end-0 m-3 px-3 py-1 rounded-pill fw-bold text-white bg-danger">
+                            <i class="fas fa-gem me-1"></i> Offbeat
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="fw-bold mb-0 text-dark me-2">{{ place.name }}</h5>
+                            <span class="badge bg-warning text-dark fw-bold text-nowrap"><i class="fas fa-star me-1 text-danger"></i>{{ place.rating }}</span>
+                        </div>
+                        <p class="text-muted small mb-2"><i class="fas fa-map-marker-alt text-danger me-1"></i>{{ place.city }}, {{ place.state }}</p>
+                        <p class="text-secondary small mb-3 flex-grow-1" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ place.short_description }}
+                        </p>
+
+                        <div class="border-top pt-3 d-flex align-items-center justify-content-between mt-auto">
+                            <div>
+                                <span class="text-muted small d-block">Est. Cost / day</span>
+                                <span class="fw-bold text-success fs-6">₹{{ place.estimated_cost|floatformat:0 }}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger btn-sm rounded-circle p-2" title="Open Google Maps">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </a>
+                                <a href="{% url 'place_detail' pk=place.pk %}" class="btn btn-yatra btn-sm rounded-pill px-3 fw-semibold">
+                                    Details <i class="fas fa-chevron-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 bg-white rounded-4 shadow-sm p-5">
+            <i class="fas fa-compass fa-3x text-muted mb-3"></i>
+            <h4 class="fw-bold">No places found in this category yet</h4>
+            <p class="text-muted">Check out other categories on our Explore page.</p>
+            <a href="{% url 'explore' %}" class="btn btn-warning rounded-pill px-4 fw-bold">Explore All Places</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Category Callout Banner -->
+<section class="py-5 bg-dark text-white text-center" style="background: {{ theme.gradient }};">
+    <div class="container py-3">
+        <h3 class="fw-extrabold display-6 mb-3">Ready to plan your {{ theme.name }} experience?</h3>
+        <p class="lead text-white-50 max-w-700 mx-auto mb-4">Let our AI build a day-wise itinerary, budget calculation, and interactive map tailored specifically for you.</p>
+        <a href="{% url 'plan_trip' %}?category={{ theme.name }}" class="btn btn-warning btn-lg rounded-pill fw-bold px-5 shadow-lg">
+            Plan My {{ theme.name }} Trip Now
+        </a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ place.name }} - Details & Travel Info | YatraAI{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-decoration-none text-muted">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'explore' %}" class="text-decoration-none text-muted">Explore</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ place.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Main Image & Details Column -->
+        <div class="col-lg-8">
+            <div class="card border-0 rounded-4 overflow-hidden shadow-sm mb-4">
+                <div style="position: relative; height: 400px; overflow: hidden;">
+                    <img src="{{ place.image_url }}" style="width: 100%; height: 100%; object-fit: cover;" alt="{{ place.name }}">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.85), transparent); padding: 2rem; color: white;">
+                        <span class="badge bg-warning text-dark fw-bold mb-2">{{ place.category }}</span>
+                        {% if place.is_hidden_gem %}
+                        <span class="badge bg-emerald text-white fw-bold mb-2 ms-1" style="background-color: #059669;"><i class="fas fa-gem me-1"></i> Hidden Gem</span>
+                        {% endif %}
+                        <h1 class="fw-extrabold display-6 mb-1">{{ place.name }}</h1>
+                        <p class="mb-0 opacity-90"><i class="fas fa-location-dot me-1 text-danger"></i> {{ place.city }}, {{ place.state }}, India</p>
+                    </div>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        {% for tag in place.tag_list %}
+                        <span class="badge bg-light text-dark border px-3 py-2 rounded-pill"><i class="fas fa-tag me-1 text-warning"></i> {{ tag }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <h5 class="fw-bold mb-3">About {{ place.name }}</h5>
+                    <p class="text-secondary lead fs-6 lh-lg mb-4">{{ place.description }}</p>
+
+                    <h5 class="fw-bold mb-3"><i class="fas fa-map-location-dot me-2 text-warning"></i> Location Map</h5>
+                    <div id="map-detail" class="mb-4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Info & Action Card -->
+        <div class="col-lg-4">
+            <div class="card border-0 rounded-4 shadow-sm p-4 sticky-lg-top bg-white" style="top: 100px;">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        <small class="text-muted d-block">Overall Rating</small>
+                        <span class="fw-bold fs-4 text-dark"><i class="fas fa-star text-warning me-1"></i> {{ place.rating }} <span class="fs-6 text-muted">/ 5</span></span>
+                    </div>
+                    {% if place.is_hidden_gem %}
+                    <div class="text-end">
+                        <small class="text-muted d-block">Sustainability</small>
+                        <span class="badge bg-success px-3 py-2 fw-bold"><i class="fas fa-leaf me-1"></i> {{ place.sustainability_score }}/10</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="vstack gap-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-warning p-3 rounded-circle me-3">
+                            <i class="fas fa-indian-rupee-sign fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Estimated Entry/Cost</small>
+                            <strong class="text-dark fs-5">₹{{ place.estimated_cost|floatformat:0 }}</strong> <span class="small text-muted">/ person</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-warning p-3 rounded-circle me-3">
+                            <i class="fas fa-clock fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Recommended Duration</small>
+                            <strong class="text-dark fs-5">{{ place.recommended_duration }} Hours</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-warning p-3 rounded-circle me-3">
+                            <i class="fas fa-calendar-check fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Best Season to Visit</small>
+                            <strong class="text-dark">{{ place.best_time }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <div class="bg-light text-warning p-3 rounded-circle me-3">
+                            <i class="fas fa-location-crosshairs fs-5"></i>
+                        </div>
+                        <div>
+                            <small class="text-muted d-block">Coordinates</small>
+                            <span class="small text-monospace text-secondary">{{ place.latitude|floatformat:4 }}° N, {{ place.longitude|floatformat:4 }}° E</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-grid gap-2">
+                    <a href="{% url 'plan_trip' %}?dest={{ place.state }}" class="btn btn-warning py-3 rounded-3 fw-bold text-dark shadow-sm">
+                        <i class="fas fa-magic me-2"></i> Add to My Trip Plan
+                    </a>
+
+                    <a href="https://www.google.com/maps/search/?api=1&query={{ place.latitude }},{{ place.longitude }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline-danger py-2.5 rounded-3 fw-bold text-center">
+                        <i class="fas fa-map-marked-alt me-2"></i> Open in Google Maps
+                    </a>
+
+                    {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'toggle_favourite' place.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn {% if is_favourite %}btn-outline-danger{% else %}btn-outline-secondary{% endif %} w-100 py-2 rounded-3 fw-semibold">
+                            <i class="{% if is_favourite %}fas{% else %}far{% endif %} fa-heart me-2 text-danger"></i>
+                            {% if is_favourite %}Saved in Favourites{% else %}Add to Favourites{% endif %}
+                        </button>
+                    </form>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-secondary py-2 rounded-3 fw-semibold text-center">
+                        <i class="far fa-heart me-2 text-danger"></i> Login to Favourite
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        initSinglePlaceMap('map-detail', {{ place.latitude|default:0 }}, {{ place.longitude|default:0 }}, "{{ place.name|escapejs }}", "{{ place.city|escapejs }}");
+    });
+</script>
+{% endblock %}
