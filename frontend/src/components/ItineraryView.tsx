@@ -1,7 +1,22 @@
 import React, { useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { motion } from 'framer-motion';
-import { Sparkles, Calendar, Sun, Sunset, Moon, MapPin, IndianRupee, Clock, Bookmark, Printer, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  Sparkles,
+  Calendar,
+  Sun,
+  Sunset,
+  Moon,
+  MapPin,
+  IndianRupee,
+  Clock,
+  Bookmark,
+  Printer,
+  CheckCircle,
+  AlertCircle,
+  ExternalLink,
+  Navigation,
+} from 'lucide-react';
 import type { RecommendedPlace } from './Recommendations';
 import { RouteMap } from './RouteMap';
 import { HotelRecommendations } from './HotelRecommendations';
@@ -57,6 +72,14 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({
     Math.round((itinerary.total_estimated_cost / (itinerary.total_budget || 1)) * 100)
   );
 
+  // Build Full Master Circuit Google Maps Direction URL
+  const selectedSpots = itinerary.selected_places || [];
+  const fullCircuitUrl = selectedSpots.length > 0
+    ? `https://www.google.com/maps/dir/${encodeURIComponent(itinerary.destination)}/${selectedSpots
+        .map((s) => `${s.latitude},${s.longitude}`)
+        .join('/')}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(itinerary.destination)}`;
+
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex flex-col gap-8 text-left">
       {/* Header Banner */}
@@ -77,16 +100,25 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({
 
           {/* Action Buttons */}
           <div className="flex flex-wrap items-center gap-3">
+            <a
+              href={fullCircuitUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-slate-900 hover:bg-amber-600 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition-all shadow-md cursor-pointer"
+            >
+              <Navigation className="w-4 h-4 text-amber-400" /> View Full Circuit on Google Maps
+            </a>
+
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold transition-all"
+              className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
             >
               <Printer className="w-4 h-4" /> Print Itinerary
             </button>
             {onSaveTrip && (
               <button
                 onClick={onSaveTrip}
-                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black px-6 py-2.5 rounded-xl text-xs shadow-md shadow-amber-500/20 transition-all hover:scale-105"
+                className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black px-6 py-2.5 rounded-xl text-xs shadow-md shadow-amber-500/20 transition-all hover:scale-105 cursor-pointer"
               >
                 <Bookmark className="w-4 h-4 stroke-[2.5]" /> Save Trip
               </button>
@@ -135,9 +167,19 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({
 
       {/* Interactive Leaflet Route Map */}
       <div>
-        <h3 className="text-xl font-extrabold text-slate-900 mb-3 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-amber-600" /> 3D Route & Waypoints Map
-        </h3>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-amber-600" /> 3D Route & Waypoints Map
+          </h3>
+          <a
+            href={fullCircuitUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-extrabold text-amber-600 hover:text-amber-700 flex items-center gap-1"
+          >
+            Google Maps Circuit Directions <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        </div>
         <RouteMap spots={itinerary.selected_places || []} />
       </div>
 
@@ -147,77 +189,108 @@ export const ItineraryView: React.FC<ItineraryViewProps> = ({
           <Calendar className="w-6 h-6 text-amber-600" /> Day-by-Day Schedule
         </h3>
 
-        {itinerary.days && itinerary.days.map((dayPlan) => (
-          <motion.div
-            key={dayPlan.day}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-panel p-6 rounded-3xl border border-slate-200 flex flex-col gap-4 bg-white shadow-sm"
-          >
-            {/* Day Title Header */}
-            <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-              <span className="w-10 h-10 rounded-2xl bg-amber-500 text-white font-black text-base flex items-center justify-center shadow-md">
-                D{dayPlan.day}
-              </span>
-              <div>
-                <h4 className="text-lg font-extrabold text-slate-900">Day {dayPlan.day}: {dayPlan.title}</h4>
-                <p className="text-xs text-slate-500 font-semibold">Sequential morning to evening itinerary</p>
+        {itinerary.days &&
+          itinerary.days.map((dayPlan) => (
+            <motion.div
+              key={dayPlan.day}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-panel p-6 rounded-3xl border border-slate-200 flex flex-col gap-4 bg-white shadow-sm"
+            >
+              {/* Day Title Header */}
+              <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
+                <span className="w-10 h-10 rounded-2xl bg-amber-500 text-white font-black text-base flex items-center justify-center shadow-md">
+                  D{dayPlan.day}
+                </span>
+                <div>
+                  <h4 className="text-lg font-extrabold text-slate-900">
+                    Day {dayPlan.day}: {dayPlan.title}
+                  </h4>
+                  <p className="text-xs text-slate-500 font-semibold">
+                    Sequential morning to evening itinerary
+                  </p>
+                </div>
               </div>
-            </div>
 
-            {/* Slots Grid */}
-            <div className="flex flex-col gap-4">
-              {dayPlan.slots && dayPlan.slots.map((slot, sIdx) => {
-                const Icon =
-                  slot.time_of_day === 'Morning'
-                    ? Sun
-                    : slot.time_of_day === 'Afternoon'
-                    ? Sunset
-                    : Moon;
-                const slotColor =
-                  slot.time_of_day === 'Morning'
-                    ? 'text-amber-700 bg-amber-50 border-amber-200'
-                    : slot.time_of_day === 'Afternoon'
-                    ? 'text-orange-700 bg-orange-50 border-orange-200'
-                    : 'text-indigo-700 bg-indigo-50 border-indigo-200';
+              {/* Slots Grid */}
+              <div className="flex flex-col gap-4">
+                {dayPlan.slots &&
+                  dayPlan.slots.map((slot, sIdx) => {
+                    const Icon =
+                      slot.time_of_day === 'Morning'
+                        ? Sun
+                        : slot.time_of_day === 'Afternoon'
+                        ? Sunset
+                        : Moon;
+                    const slotColor =
+                      slot.time_of_day === 'Morning'
+                        ? 'text-amber-700 bg-amber-50 border-amber-200'
+                        : slot.time_of_day === 'Afternoon'
+                        ? 'text-orange-700 bg-orange-50 border-orange-200'
+                        : 'text-indigo-700 bg-indigo-50 border-indigo-200';
 
-                return (
-                  <div key={sIdx} className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 flex flex-col gap-2">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-3 py-1 rounded-full text-xs font-black flex items-center gap-1.5 border ${slotColor}`}>
-                          <Icon className="w-3.5 h-3.5" /> {slot.time_of_day}
-                        </span>
-                        <h5 className="text-base font-bold text-slate-900">{slot.place_name}</h5>
+                    const slotMapUrl =
+                      slot.latitude && slot.longitude
+                        ? `https://www.google.com/maps/search/?api=1&query=${slot.latitude},${slot.longitude}`
+                        : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            slot.place_name + ' ' + itinerary.destination
+                          )}`;
+
+                    return (
+                      <div
+                        key={sIdx}
+                        className="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 flex flex-col gap-2.5"
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-black flex items-center gap-1.5 border ${slotColor}`}
+                            >
+                              <Icon className="w-3.5 h-3.5" /> {slot.time_of_day}
+                            </span>
+                            <h5 className="text-base font-bold text-slate-900">
+                              {slot.place_name}
+                            </h5>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs font-semibold">
+                            <span className="flex items-center gap-1 text-emerald-600 font-bold">
+                              <IndianRupee className="w-3.5 h-3.5" /> ₹{slot.estimated_cost}
+                            </span>
+                            <span className="flex items-center gap-1 text-sky-600 font-bold">
+                              <Clock className="w-3.5 h-3.5" /> {slot.duration} hrs
+                            </span>
+
+                            {/* Direct Spot Google Maps Link */}
+                            <a
+                              href={slotMapUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 px-3 py-1 rounded-xl text-xs font-bold transition-colors shadow-xs"
+                            >
+                              <MapPin className="w-3 h-3 text-rose-500" />
+                              Google Maps <ExternalLink className="w-3 h-3 text-slate-400" />
+                            </a>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-slate-600 font-medium leading-relaxed pl-1">
+                          {slot.activity}
+                        </p>
+
+                        {slot.latitude && slot.longitude && (
+                          <HotelRecommendations
+                            spotName={slot.place_name}
+                            latitude={slot.latitude}
+                            longitude={slot.longitude}
+                          />
+                        )}
                       </div>
-
-                      <div className="flex items-center gap-3 text-xs font-semibold text-slate-500">
-                        <span className="flex items-center gap-1 text-emerald-600 font-bold">
-                          <IndianRupee className="w-3.5 h-3.5" /> ₹{slot.estimated_cost}
-                        </span>
-                        <span className="flex items-center gap-1 text-sky-600 font-bold">
-                          <Clock className="w-3.5 h-3.5" /> {slot.duration} hrs
-                        </span>
-                      </div>
-                    </div>
-
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed pl-1">
-                      {slot.activity}
-                    </p>
-
-                    {slot.latitude && slot.longitude && (
-                      <HotelRecommendations
-                        spotName={slot.place_name}
-                        latitude={slot.latitude}
-                        longitude={slot.longitude}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        ))}
+                    );
+                  })}
+              </div>
+            </motion.div>
+          ))}
       </div>
     </div>
   );
