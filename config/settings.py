@@ -127,7 +127,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = Path('/tmp/staticfiles') if IS_VERCEL else (BASE_DIR / 'staticfiles')
+
+# WhiteNoise Configuration for Vercel & Production Static File Serving
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
