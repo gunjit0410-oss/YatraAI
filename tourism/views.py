@@ -16,8 +16,14 @@ from .services.ai_service import generate_ai_itinerary
 from .services.budget_service import calculate_trip_budget
 
 
+from django.conf import settings
+
 def home_view(request):
-    """Landing Page with Hero banner, top destinations, interests, and how it works."""
+    """Landing Page with 3D React Production UI or fallback Django template."""
+    dist_index = settings.BASE_DIR / 'frontend' / 'dist' / 'index.html'
+    if dist_index.exists():
+        return render(request, 'index.html')
+
     featured_places = TouristPlace.objects.all().order_by('-rating')[:12]
     hidden_gems = TouristPlace.objects.filter(is_hidden_gem=True)[:4]
     
@@ -477,6 +483,68 @@ def logout_view(request):
     return redirect('home')
 
 
+# REST API Authentication Views
+@api_view(['GET'])
+def api_auth_status(request):
+    """Returns current user authentication status as JSON."""
+    if request.user.is_authenticated:
+        return Response({
+            'is_authenticated': True,
+            'username': request.user.username,
+            'email': request.user.email,
+        })
+    return Response({'is_authenticated': False, 'username': None})
+
+
+@api_view(['POST'])
+def api_login_view(request):
+    """API Login view for JSON requests."""
+    try:
+        data = request.data if isinstance(request.data, dict) else json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return Response({'success': True, 'username': user.username, 'message': f'Welcome back, {user.username}!'})
+    return Response({'success': False, 'message': 'Invalid username or password.'}, status=400)
+
+
+@api_view(['POST'])
+def api_register_view(request):
+    """API Register view for JSON requests."""
+    try:
+        data = request.data if isinstance(request.data, dict) else json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+    email = data.get('email', '').strip()
+
+    if not username or not password:
+        return Response({'success': False, 'message': 'Username and password are required.'}, status=400)
+
+    from django.contrib.auth.models import User
+    if User.objects.filter(username=username).exists():
+        return Response({'success': False, 'message': 'Username is already taken.'}, status=400)
+
+    user = User.objects.create_user(username=username, password=password, email=email)
+    login(request, user)
+    return Response({'success': True, 'username': user.username, 'message': f'Welcome to YatraAI, {user.username}!'})
+
+
+@api_view(['POST', 'GET'])
+def api_logout_view(request):
+    """API Logout view."""
+    logout(request)
+    return Response({'success': True, 'message': 'Logged out successfully.'})
+
+
 # REST API endpoints for DRF
 @api_view(['GET'])
 def api_destinations_list(request):
@@ -491,8 +559,8 @@ def api_destinations_list(request):
 
 @api_view(['GET'])
 def api_places_list(request):
-    """DRF Endpoint listing places as JSON."""
-    places = TouristPlace.objects.all()[:50]
+    """DRF Endpoint listing places as JSON with full spatial coordinates & metadata."""
+    places = TouristPlace.objects.all()[:60]
     data = []
     for p in places:
         data.append({
@@ -501,9 +569,18 @@ def api_places_list(request):
             'state': p.state,
             'city': p.city,
             'category': p.category,
+            'description': p.description,
+            'short_description': p.short_description,
+            'best_time': p.best_time,
             'estimated_cost': p.estimated_cost,
+            'recommended_duration': p.recommended_duration,
+            'latitude': p.latitude,
+            'longitude': p.longitude,
             'rating': p.rating,
-            'is_hidden_gem': p.is_hidden_gem
+            'image_url': p.image_url,
+            'tags': p.tag_list,
+            'is_hidden_gem': p.is_hidden_gem,
+            'sustainability_score': p.sustainability_score,
         })
     return Response(data)
 

@@ -22,6 +22,10 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
 
     # REST API
+    path('api/auth/status/', views.api_auth_status, name='api_auth_status'),
+    path('api/auth/login/', views.api_login_view, name='api_auth_login'),
+    path('api/auth/register/', views.api_register_view, name='api_auth_register'),
+    path('api/auth/logout/', views.api_logout_view, name='api_auth_logout'),
     path('api/destinations/', views.api_destinations_list, name='api_destinations_list'),
     path('api/places/', views.api_places_list, name='api_places_list'),
     path('api/chat/', views.api_chat_view, name='api_chat'),

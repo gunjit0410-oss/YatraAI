@@ -9,6 +9,10 @@ __pycache__/
 db.sqlite3
 staticfiles/
 
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+
 # Virtual Environment
 venv/
 env/

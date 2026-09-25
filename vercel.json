@@ -7,6 +7,7 @@
       "config": {
         "maxLambdaSize": "15mb",
         "includeFiles": [
+          "frontend/dist/**",
           "static/**",
           "data/**"
         ]
@@ -20,4 +21,3 @@
     }
   ]
 }
-
