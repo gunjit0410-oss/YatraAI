@@ -58,12 +58,44 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database Configuration (Supports Local SQLite, Vercel Serverless /tmp SQLite, and PostgreSQL via DATABASE_URL)
+IS_VERCEL = 'VERCEL' in os.environ or os.getenv('SERVERLESS') == '1'
+
+if os.getenv('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+elif IS_VERCEL:
+    # On Vercel, /var/task is read-only. Copy database to /tmp if it exists
+    TMP_DB = Path('/tmp/db.sqlite3')
+    ORIGINAL_DB = BASE_DIR / 'db.sqlite3'
+
+    if ORIGINAL_DB.exists() and not TMP_DB.exists():
+        try:
+            import shutil
+            shutil.copyfile(ORIGINAL_DB, TMP_DB)
+        except Exception as e:
+            print("Failed to copy original db.sqlite3 to /tmp:", e)
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': TMP_DB if (TMP_DB.exists() or not ORIGINAL_DB.exists()) else ORIGINAL_DB,
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
