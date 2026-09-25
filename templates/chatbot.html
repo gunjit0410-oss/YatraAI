@@ -1,0 +1,103 @@
+{% load static %}
+<!-- Yatra AI Floating Chatbot Launcher -->
+<div id="yatra-chatbot-container">
+    <!-- Floating Launcher Button -->
+    <button id="yatra-chat-launcher" class="btn yatra-bot-launcher" type="button" aria-label="Open Yatra AI Assistant" title="Ask Yatra AI Assistant">
+        <div class="launcher-pulse"></div>
+        <div class="launcher-icon-wrap">
+            <i class="fas fa-robot launcher-icon"></i>
+        </div>
+        <span class="launcher-badge-text d-none d-md-inline-block">Ask Yatra AI</span>
+        <span class="unread-dot"></span>
+    </button>
+
+    <!-- Floating Chat Window Modal -->
+    <div id="yatra-chat-window" class="yatra-chat-window d-none" aria-live="polite">
+        <!-- Chat Header -->
+        <div class="chat-header d-flex align-items-center justify-content-between p-3">
+            <div class="d-flex align-items-center gap-2.5">
+                <div class="avatar-header-wrap">
+                    <i class="fas fa-robot text-warning"></i>
+                    <span class="status-indicator-dot" title="AI Online"></span>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-0 text-white chat-title">Yatra AI Assistant</h6>
+                    <small class="text-white-50 chat-subtitle">Your travel & support companion</small>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <button type="button" id="yatra-chat-close" class="btn btn-sm btn-icon-header text-white-50" aria-label="Close Chatbot">
+                    <i class="fas fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div id="yatra-chat-body" class="chat-body p-3">
+            <!-- Messages Container -->
+            <div id="yatra-chat-messages" class="d-flex flex-column gap-3">
+                <!-- Welcome Message (Rendered on load) -->
+                <div class="chat-message bot-message d-flex gap-2 align-items-start">
+                    <div class="bot-avatar">
+                        <i class="fas fa-robot text-dark"></i>
+                    </div>
+                    <div class="message-content">
+                        <p class="mb-2">Hi! I'm your <strong>Yatra AI Assistant</strong>. 🙏</p>
+                        <p class="mb-0">I can help you plan trips, explore destinations across India, answer questions, or handle feedback and complaints. How can I help you today?</p>
+                    </div>
+                </div>
+
+                <!-- Quick Action Chips -->
+                <div id="yatra-quick-actions" class="quick-actions-wrapper my-1">
+                    <span class="quick-action-label text-muted small d-block mb-2">Suggested Quick Actions:</span>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="quick-chip-btn" data-prompt="How do I plan a trip on Yatra AI?">
+                            <i class="fas fa-compass text-warning me-1"></i> Plan My Trip
+                        </button>
+                        <button type="button" class="quick-chip-btn" data-prompt="Suggest top heritage places in India">
+                            <i class="fas fa-landmark text-primary me-1"></i> Explore Destinations
+                        </button>
+                        <button type="button" class="quick-chip-btn" data-prompt="What features does Yatra AI offer?">
+                            <i class="fas fa-circle-question text-info me-1"></i> Website Help
+                        </button>
+                        <button type="button" class="quick-chip-btn" data-prompt="I want to report a problem or bug">
+                            <i class="fas fa-triangle-exclamation text-danger me-1"></i> Report a Problem
+                        </button>
+                        <button type="button" class="quick-chip-btn" data-prompt="I want to give feedback or suggestions">
+                            <i class="fas fa-lightbulb text-warning me-1"></i> Give Feedback
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator (Hidden by default) -->
+            <div id="yatra-typing-indicator" class="chat-message bot-message d-none gap-2 align-items-center mt-3">
+                <div class="bot-avatar">
+                    <i class="fas fa-robot text-dark"></i>
+                </div>
+                <div class="typing-bubble">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Footer -->
+        <div class="chat-footer p-3 bg-white border-top">
+            <form id="yatra-chat-form" class="d-flex align-items-center gap-2" onsubmit="return false;">
+                {% csrf_token %}
+                <div class="input-group">
+                    <input type="text" id="yatra-chat-input" class="form-control chat-input" placeholder="Ask Yatra AI anything..." autocomplete="off" aria-label="Type your message">
+                    <button type="submit" id="yatra-chat-send" class="btn btn-warning send-btn px-3" aria-label="Send Message">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="d-flex justify-content-between align-items-center mt-1 px-1">
+                <span class="chat-footer-brand text-muted">Powered by Yatra AI & Gemini</span>
+                <span class="text-muted text-micro">Press Enter to send</span>
+            </div>
+        </div>
+    </div>
+</div>

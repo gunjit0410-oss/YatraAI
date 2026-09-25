@@ -9,7 +9,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .models import TouristPlace, SavedTrip, Favourite
+from .models import TouristPlace, SavedTrip, Favourite, UserFeedback
 from .forms import PlanTripForm, CustomUserCreationForm
 from .services.recommendation import get_recommendations
 from .services.ai_service import generate_ai_itinerary
@@ -506,4 +506,100 @@ def api_places_list(request):
             'is_hidden_gem': p.is_hidden_gem
         })
     return Response(data)
+
+
+@api_view(['POST'])
+def api_chat_view(request):
+    """
+    POST API Endpoint for Yatra AI Floating Chatbot.
+    Receives user message and optional conversation history, returns AI response.
+    """
+    try:
+        data = request.data if isinstance(request.data, dict) else json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    user_message = data.get('message', '').strip()
+    history = data.get('history', [])
+
+    if not user_message:
+        return Response({'success': False, 'reply': 'Please type a message before sending.'}, status=400)
+
+    from .services.chatbot_service import handle_chat_query
+    res = handle_chat_query(
+        user_message,
+        history=history,
+        user=request.user if request.user.is_authenticated else None
+    )
+    return Response(res)
+
+
+@api_view(['POST'])
+def api_feedback_view(request):
+    """
+    POST API Endpoint for explicitly submitting user complaints, feedback, or suggestions.
+    """
+    try:
+        data = request.data if isinstance(request.data, dict) else json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    category = data.get('category', 'Feedback')
+    message = data.get('message', '').strip()
+    subject = data.get('subject', 'User Direct Submission')
+    contact_email = data.get('email', '')
+
+    if not message:
+        return Response({'success': False, 'message': 'Message body cannot be empty.'}, status=400)
+
+    fb = UserFeedback.objects.create(
+        user=request.user if request.user.is_authenticated else None,
+        category=category,
+        subject=subject,
+        message=message,
+        contact_email=contact_email
+    )
+    return Response({'success': True, 'message': 'Thank you! Your feedback has been recorded successfully.', 'id': fb.id})
+
+
+@api_view(['GET'])
+def api_nearby_hotels_view(request):
+    """
+    GET API Endpoint to fetch nearby budget/economic hotel recommendations for a tourist spot.
+    Query params: lat, lng, place_id, place_name, radius, sort
+    """
+    lat = request.GET.get('lat')
+    lng = request.GET.get('lng')
+    place_name = request.GET.get('place_name', 'Spot')
+    
+    try:
+        radius = float(request.GET.get('radius', 5.0))
+    except (ValueError, TypeError):
+        radius = 5.0
+
+    sort_by = request.GET.get('sort', 'distance')
+
+    if (not lat or not lng) and request.GET.get('place_id'):
+        try:
+            place = TouristPlace.objects.get(pk=request.GET.get('place_id'))
+            lat = place.latitude
+            lng = place.longitude
+            if not place_name or place_name == 'Spot':
+                place_name = place.name
+        except TouristPlace.DoesNotExist:
+            pass
+
+    from .services.hotel_service import get_nearby_hotels
+    hotels = get_nearby_hotels(lat=lat, lng=lng, place_name=place_name, radius_km=radius, sort_by=sort_by)
+
+    return Response({
+        'success': True,
+        'place_name': place_name,
+        'lat': lat,
+        'lng': lng,
+        'total_found': len(hotels),
+        'hotels': hotels
+    })
+
+
 

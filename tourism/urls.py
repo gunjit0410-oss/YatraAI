@@ -24,5 +24,9 @@ urlpatterns = [
     # REST API
     path('api/destinations/', views.api_destinations_list, name='api_destinations_list'),
     path('api/places/', views.api_places_list, name='api_places_list'),
+    path('api/chat/', views.api_chat_view, name='api_chat'),
+    path('api/feedback/', views.api_feedback_view, name='api_feedback'),
+    path('api/nearby-hotels/', views.api_nearby_hotels_view, name='api_nearby_hotels'),
 ]
+
 

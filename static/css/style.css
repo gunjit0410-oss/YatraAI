@@ -27,9 +27,31 @@ body {
     letter-spacing: -0.5px;
 }
 
+.navbar.sticky-top {
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.3s ease;
+    will-change: transform;
+}
+
+.navbar.nav-hidden {
+    transform: translateY(-100%) !important;
+}
+
 .bg-travel-nav {
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.14);
+    border-bottom: 1px solid #fed7aa;
+    backdrop-filter: blur(12px);
+}
+
+.bg-travel-nav .nav-link {
+    color: #1e293b !important;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.bg-travel-nav .nav-link:hover,
+.bg-travel-nav .nav-link.active {
+    color: #c2410c !important;
 }
 
 /* Hero Section & Interactive Background Carousel */

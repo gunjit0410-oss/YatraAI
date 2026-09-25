@@ -3,15 +3,33 @@
  */
 
 document.addEventListener("DOMContentLoaded", function() {
-    // Navbar Blur & Background Toggle on Scroll
+    // Smart Navbar Hide on Scroll-Down & Reveal on Scroll-Up
     const navbar = document.querySelector('.navbar');
     if (navbar) {
+        let lastScrollTop = 0;
+        const delta = 8;
+        
         window.addEventListener('scroll', function() {
-            if (window.scrollY > 50) {
-                navbar.classList.add('shadow-lg');
-            } else {
-                navbar.classList.remove('shadow-lg');
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (currentScroll <= 15) {
+                navbar.classList.remove('nav-hidden');
+                return;
             }
+            
+            if (Math.abs(lastScrollTop - currentScroll) <= delta) {
+                return;
+            }
+            
+            if (currentScroll > lastScrollTop && currentScroll > 70) {
+                // Scrolling DOWN -> Slide UP (Hide)
+                navbar.classList.add('nav-hidden');
+            } else {
+                // Scrolling UP -> Slide DOWN (Reveal)
+                navbar.classList.remove('nav-hidden');
+            }
+            
+            lastScrollTop = currentScroll;
         });
     }
 

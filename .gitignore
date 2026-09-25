@@ -1,0 +1,21 @@
+# Environment variables (NEVER COMMIT API KEYS)
+.env
+.env.local
+*.env
+
+# Python & Django
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
+
+# Virtual Environment
+venv/
+env/
+.venv/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

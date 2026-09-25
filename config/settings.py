@@ -90,4 +90,9 @@ LOGIN_REDIRECT_URL = 'my_trips'
 LOGOUT_REDIRECT_URL = 'home'
 
 # AI Integration settings
-AI_API_KEY = os.getenv('AI_API_KEY', '')
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '') or os.getenv('AI_API_KEY', '')
+AI_API_KEY = GEMINI_API_KEY
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-3.6-flash')
+
+
+

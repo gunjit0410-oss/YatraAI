@@ -45,6 +45,9 @@
                             </button>
                             {% endif %}
                         </div>
+
+                        <!-- Nearby Economic Stays Recommendation Container -->
+                        <div class="spot-hotels-wrapper mt-3" data-spot-name="{{ day.morning.place_name }}" data-lat="{{ day.morning.lat }}" data-lng="{{ day.morning.lng }}" data-place-id="{{ day.morning.place_id }}"></div>
                     </div>
                     {% endif %}
 
@@ -64,6 +67,9 @@
                             </button>
                             {% endif %}
                         </div>
+
+                        <!-- Nearby Economic Stays Recommendation Container -->
+                        <div class="spot-hotels-wrapper mt-3" data-spot-name="{{ day.afternoon.place_name }}" data-lat="{{ day.afternoon.lat }}" data-lng="{{ day.afternoon.lng }}" data-place-id="{{ day.afternoon.place_id }}"></div>
                     </div>
                     {% endif %}
 
@@ -83,6 +89,9 @@
                             </button>
                             {% endif %}
                         </div>
+
+                        <!-- Nearby Economic Stays Recommendation Container -->
+                        <div class="spot-hotels-wrapper mt-3" data-spot-name="{{ day.evening.place_name }}" data-lat="{{ day.evening.lat }}" data-lng="{{ day.evening.lng }}" data-place-id="{{ day.evening.place_id }}"></div>
                     </div>
                     {% endif %}
                 </div>
@@ -106,6 +115,8 @@
 {% endblock %}
 
 {% block extra_js %}
+{% load static %}
+<script src="{% static 'js/hotels.js' %}"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const placesData = {{ map_places_json|default:'[]'|safe }};
@@ -115,3 +126,4 @@
     });
 </script>
 {% endblock %}
+

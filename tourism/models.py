@@ -82,3 +82,26 @@ class Favourite(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.place.name}"
+
+
+class UserFeedback(models.Model):
+    CATEGORY_CHOICES = [
+        ('Complaint', 'Complaint / Technical Issue'),
+        ('Feedback', 'General Feedback'),
+        ('Suggestion', 'Feature Suggestion'),
+        ('Destination', 'Destination Recommendation'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='feedbacks')
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='Feedback')
+    subject = models.CharField(max_length=200, blank=True, default='User Inquiry')
+    message = models.TextField()
+    contact_email = models.EmailField(blank=True, null=True)
+    status = models.CharField(max_length=20, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.category}: {self.subject} ({self.created_at.strftime('%Y-%m-%d')})"
+

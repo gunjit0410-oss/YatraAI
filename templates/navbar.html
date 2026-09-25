@@ -1,33 +1,32 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-travel-nav sticky-top py-3">
+<nav class="navbar navbar-expand-lg navbar-light bg-travel-nav sticky-top py-1.5 shadow-sm">
     <div class="container">
-        <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="YatraAI Logo" height="42" class="d-inline-block align-text-top rounded-2 shadow-sm">
-            <span class="text-white fw-bold fs-4 ms-1">Yatra<span class="text-warning">AI</span></span>
+        <a class="navbar-brand d-flex align-items-center py-0" href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="YatraAI Logo" height="45" style="height: 45px; max-height: 48px; width: auto; object-fit: contain;" class="d-inline-block align-text-top rounded-2 shadow-sm">
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarMain">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 gap-3 gap-lg-5">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-5 gap-2 gap-lg-4">
                 <li class="nav-item">
-                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'home' %}active fw-bold text-warning{% endif %}" href="{% url 'home' %}">
+                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'home' %}active fw-bold{% endif %}" href="{% url 'home' %}">
                         Home
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'explore' %}active fw-bold text-warning{% endif %}" href="{% url 'explore' %}">
+                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'explore' %}active fw-bold{% endif %}" href="{% url 'explore' %}">
                         Explore
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'plan_trip' %}active fw-bold text-warning{% endif %}" href="{% url 'plan_trip' %}">
+                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'plan_trip' %}active fw-bold{% endif %}" href="{% url 'plan_trip' %}">
                         Plan My Trip
                     </a>
                 </li>
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'my_trips' %}active fw-bold text-warning{% endif %}" href="{% url 'my_trips' %}">
+                    <a class="nav-link px-3 {% if request.resolver_match.url_name == 'my_trips' %}active fw-bold{% endif %}" href="{% url 'my_trips' %}">
                         My Trips
                     </a>
                 </li>
@@ -36,8 +35,8 @@
             <div class="d-flex align-items-center gap-2">
                 {% if user.is_authenticated %}
                 <div class="dropdown">
-                    <button class="btn btn-outline-light dropdown-toggle rounded-pill px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                    <button class="btn btn-outline-dark dropdown-toggle rounded-pill px-3 py-1 fw-semibold" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle me-1 text-danger"></i> {{ user.username }}
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end rounded-3 shadow border-0 mt-2">
                         <li><a class="dropdown-item" href="{% url 'my_trips' %}"><i class="fas fa-suitcase me-2 text-warning"></i> My Saved Trips</a></li>
@@ -46,8 +45,8 @@
                     </ul>
                 </div>
                 {% else %}
-                <a href="{% url 'login' %}" class="btn btn-link text-white text-decoration-none me-2 fw-semibold">Login</a>
-                <a href="{% url 'register' %}" class="btn btn-warning rounded-pill fw-bold px-4">Register</a>
+                <a href="{% url 'login' %}" class="btn btn-link text-dark text-decoration-none me-2 fw-semibold">Login</a>
+                <a href="{% url 'register' %}" class="btn btn-warning rounded-pill fw-bold px-4 shadow-sm">Register</a>
                 {% endif %}
             </div>
         </div>
